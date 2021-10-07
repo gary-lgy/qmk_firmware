@@ -1,0 +1,3 @@
+AUTO_SHIFT_ENABLE = yes
+# CONSOLE_ENABLE = yes
+
