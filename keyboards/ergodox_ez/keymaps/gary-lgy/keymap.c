@@ -16,6 +16,7 @@ enum custom_keycodes {
     RGB_SLD = EZ_SAFE_RANGE,
     MACRO_NOT_EQUAL,
     MACRO_COLON_EQUAL,
+    MACRO_VISIBLE_WINDOW,
     CUSTOM_KC_SHIFT_LOCK,
 };
 
@@ -24,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_BLOCK] = LAYOUT_ergodox(
 
             // left hand
-            KC_Q,                 KC_DOT,      KC_U,              KC_P,             KC_J,        KC_COLON,         KC_NO,
+            KC_Q,                 KC_DOT,      KC_U,              KC_P,             KC_J,        KC_COLON,         KC_MEDIA_PLAY_PAUSE,
             KC_SCOLON,            KC_I,        KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
             KC_Z,                 KC_COMMA,    KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
             KC_NO,                KC_NO,       KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         CUSTOM_KC_SHIFT_LOCK,
@@ -32,8 +33,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
             // left thumb
             /*none*/      KC_MS_BTN1,    KC_MS_BTN2,
-            /*none*/      /*none*/       KC_NO,
-            KC_ESCAPE,    KC_NO,         KC_MS_BTN3,
+            /*none*/      /*none*/       MACRO_VISIBLE_WINDOW,
+            KC_ESCAPE,    C(KC_B),       KC_MS_BTN3,
 
             // right hand
             KC_CAPSLOCK,    KC_SLASH,    KC_K,                      KC_L,             KC_C,       KC_R,       KC_F,
@@ -43,9 +44,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             /*none*/        /*none*/     LT(LAYER_NAV,KC_SPACE),    TT(LAYER_SYM),    KC_LEFT,    KC_DOWN,    KC_RIGHT,
 
             // right thumb
-            KC_LEFT,    KC_RIGHT,
+            C(KC_LEFT),    C(KC_RIGHT),
             KC_UP,
-            KC_DOWN,    KC_NO,    KC_ENTER
+            KC_DOWN,       A(KC_SPACE),    KC_ENTER
 
             ),
 
@@ -221,6 +222,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(":=");
             } else {
                 // released
+            }
+            return false;
+        case MACRO_VISIBLE_WINDOW:
+            if (record->event.pressed) {
+                add_mods(MOD_BIT(KC_LGUI));
+                tap_code(KC_GRAVE);
+            } else {
+                unregister_mods(MOD_BIT(KC_LGUI));
             }
             return false;
         case CUSTOM_KC_SHIFT_LOCK:

@@ -28,5 +28,6 @@
 /* https://beta.docs.qmk.fm/using-qmk/software-features/one_shot_keys */
 #define ONESHOT_TAP_TOGGLE 2
 
+#define AUTO_SHIFT_TIMEOUT 135
 #define AUTO_SHIFT_REPEAT
 #define AUTO_SHIFT_NO_AUTO_REPEAT
