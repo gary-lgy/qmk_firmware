@@ -17,7 +17,12 @@ enum custom_keycodes {
     MACRO_NOT_EQUAL,
     MACRO_COLON_EQUAL,
     MACRO_VISIBLE_WINDOW,
+    MACRO_SEARCH_HIGHLIGHTED,
     CUSTOM_KC_SHIFT_LOCK,
+};
+
+enum tap_dance_keycodes {
+    TD_CMD_G,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -25,11 +30,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_BLOCK] = LAYOUT_ergodox(
 
             // left hand
-            KC_Q,                 KC_DOT,      KC_U,              KC_P,             KC_J,        KC_COLON,         KC_MEDIA_PLAY_PAUSE,
-            KC_SCOLON,            KC_I,        KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
-            KC_Z,                 KC_COMMA,    KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
-            KC_NO,                KC_NO,       KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         CUSTOM_KC_SHIFT_LOCK,
-            MO(LAYER_CONTROL),    KC_NO,       TT(LAYER_FUNC),    TT(LAYER_NUM),    KC_BSPACE,
+            KC_Q,                        KC_DOT,          KC_U,              KC_P,             KC_J,        KC_COLON,         KC_MEDIA_PLAY_PAUSE,
+            KC_SCOLON,                   KC_I,            KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
+            KC_Z,                        KC_COMMA,        KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
+            MACRO_SEARCH_HIGHLIGHTED,    TD(TD_CMD_G),    KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         CUSTOM_KC_SHIFT_LOCK,
+            MO(LAYER_CONTROL),           KC_NO,           TT(LAYER_FUNC),    TT(LAYER_NUM),    KC_BSPACE,
 
             // left thumb
             /*none*/      KC_MS_BTN1,    KC_MS_BTN2,
@@ -199,7 +204,103 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-bool shift_lock_on = false;
+typedef enum {
+    TD_NONE,
+    TD_UNKNOWN,
+    TD_SINGLE_TAP,
+    TD_SINGLE_HOLD,
+    TD_DOUBLE_TAP,
+    TD_DOUBLE_HOLD,
+    TD_DOUBLE_SINGLE_TAP, // Send two single taps
+} td_state_t;
+
+typedef struct {
+    bool is_press_action;
+    td_state_t state;
+} td_tap_t;
+
+/* Return an integer that corresponds to what kind of tap dance should be executed.
+ *
+ * How to figure out tap dance state: interrupted and pressed.
+ *
+ * Interrupted: If the state of a dance dance is "interrupted", that means that another key has been hit
+ *  under the tapping term. This is typically indicitive that you are trying to "tap" the key.
+ *
+ * Pressed: Whether or not the key is still being pressed. If this value is true, that means the tapping term
+ *  has ended, but the key is still being pressed down. This generally means the key is being "held".
+ *
+ * One thing that is currenlty not possible with qmk software in regards to tap dance is to mimic the "permissive hold"
+ *  feature. In general, advanced tap dances do not work well if they are used with commonly typed letters.
+ *  For example "A". Tap dances are best used on non-letter keys that are not hit while typing letters.
+ *
+ * Good places to put an advanced tap dance:
+ *  z,q,x,j,k,v,b, any function key, home/end, comma, semi-colon
+ *
+ * Criteria for "good placement" of a tap dance key:
+ *  Not a key that is hit frequently in a sentence
+ *  Not a key that is used frequently to double tap, for example 'tab' is often double tapped in a terminal, or
+ *    in a web form. So 'tab' would be a poor choice for a tap dance.
+ *  Letters used in common words as a double. For example 'p' in 'pepper'. If a tap dance function existed on the
+ *    letter 'p', the word 'pepper' would be quite frustating to type.
+ *
+ * For the third point, there does exist the 'TD_DOUBLE_SINGLE_TAP', however this is not fully tested
+ *
+ */
+td_state_t cur_dance(qk_tap_dance_state_t *state) {
+    if (state->count == 1) {
+        if (state->interrupted || !state->pressed) return TD_SINGLE_TAP;
+        // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
+        else return TD_SINGLE_HOLD;
+    } else if (state->count == 2) {
+        // TD_DOUBLE_SINGLE_TAP is to distinguish between typing "pepper", and actually wanting a double tap
+        // action when hitting 'pp'. Suggested use case for this return value is when you want to send two
+        // keystrokes of the key, and not the 'double tap' action/macro.
+        if (state->interrupted) return TD_DOUBLE_SINGLE_TAP;
+        else if (state->pressed) return TD_DOUBLE_HOLD;
+        else return TD_DOUBLE_TAP;
+    }
+
+    return TD_UNKNOWN;
+}
+
+// Create an instance of 'td_tap_t' for the 'x' tap dance.
+static td_tap_t cmd_g_tap_state = {
+    .is_press_action = true,
+    .state = TD_NONE
+};
+
+void cmd_g_finished(qk_tap_dance_state_t *state, void *user_data) {
+    cmd_g_tap_state.state = cur_dance(state);
+    switch (cmd_g_tap_state.state) {
+        case TD_SINGLE_TAP: register_code16(G(KC_G)); break;
+        case TD_SINGLE_HOLD: register_code16(G(KC_G)); break;
+        case TD_DOUBLE_TAP: register_code16(S(G(KC_G))); break;
+        case TD_DOUBLE_HOLD: register_code16(S(G(KC_G))); break;
+        // Last case is for fast typing. Assuming your key is `f`:
+        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
+        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
+        case TD_DOUBLE_SINGLE_TAP: register_code16(S(G(KC_G))); break;
+        default: break;
+    }
+}
+
+void cmd_g_reset(qk_tap_dance_state_t *state, void *user_data) {
+    switch (cmd_g_tap_state.state) {
+        case TD_SINGLE_TAP: unregister_code16(G(KC_G)); break;
+        case TD_SINGLE_HOLD: unregister_code16(G(KC_G)); break;
+        case TD_DOUBLE_TAP: unregister_code16(S(G(KC_G))); break;
+        case TD_DOUBLE_HOLD: unregister_code16(S(G(KC_G))); break;
+        case TD_DOUBLE_SINGLE_TAP: unregister_code16(S(G(KC_G))); break;
+        default: break;
+    }
+    cmd_g_tap_state.state = TD_NONE;
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_CMD_G] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, cmd_g_finished, cmd_g_reset)
+};
+
+static bool shift_lock_on = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
@@ -230,6 +331,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_GRAVE);
             } else {
                 unregister_mods(MOD_BIT(KC_LGUI));
+            }
+            return false;
+        case MACRO_SEARCH_HIGHLIGHTED:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LGUI("c") SS_LGUI("f") SS_DELAY(100) SS_LGUI("v"));
+            } else {
             }
             return false;
         case CUSTOM_KC_SHIFT_LOCK:
