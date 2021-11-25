@@ -18,6 +18,7 @@ enum custom_keycodes {
     MACRO_VISIBLE_WINDOW,
     MACRO_SEARCH_HIGHLIGHTED,
     CUSTOM_KC_SHIFT_LOCK,
+    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,
 };
 
 enum tap_dance_keycodes {
@@ -32,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,                        KC_DOT,          KC_U,              KC_P,             KC_J,        KC_COLON,         KC_MEDIA_PLAY_PAUSE,
             KC_SCOLON,                   KC_I,            KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
             KC_Z,                        KC_COMMA,        KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
-            MACRO_SEARCH_HIGHLIGHTED,    TD(TD_CMD_G),    KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         CUSTOM_KC_SHIFT_LOCK,
+            MACRO_SEARCH_HIGHLIGHTED,    TD(TD_CMD_G),    KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         C(A(KC_SPACE)),
             MO(LAYER_CONTROL),           KC_NO,           TT(LAYER_FUNC),    TT(LAYER_NUM),    KC_BSPACE,
 
             // left thumb
@@ -41,11 +42,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_ESCAPE,    C(KC_B),       KC_MS_BTN3,
 
             // right hand
-            KC_CAPSLOCK,    KC_SLASH,    KC_K,        KC_L,             KC_C,       KC_R,       KC_F,
-            KC_TAB,         KC_MINUS,    KC_M,        KC_H,             KC_T,       KC_S,       KC_B,
-            /*none*/        KC_EQUAL,    KC_V,        KC_N,             KC_D,       KC_G,       KC_X,
-            KC_NO,          KC_RCTRL,    KC_RGUI,     KC_RSHIFT,        KC_RALT,    KC_UP,      KC_GRAVE,
-            /*none*/        /*none*/     KC_SPACE,    TT(LAYER_SYM),    KC_LEFT,    KC_DOWN,    KC_RIGHT,
+            KC_NO,      KC_SLASH,    KC_K,        KC_L,                                    KC_C,       KC_R,       KC_F,
+            KC_TAB,     KC_MINUS,    KC_M,        KC_H,                                    KC_T,       KC_S,       KC_B,
+            /*none*/    KC_EQUAL,    KC_V,        KC_N,                                    KC_D,       KC_G,       KC_X,
+            KC_NO,      KC_RCTRL,    KC_RGUI,     KC_RSHIFT,                               KC_RALT,    KC_UP,      KC_GRAVE,
+            /*none*/    /*none*/     KC_SPACE,    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,    KC_LEFT,    KC_DOWN,    KC_RIGHT,
 
             // right thumb
             C(KC_LEFT),    C(KC_RIGHT),
@@ -97,11 +98,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           KC_NO,      KC_NO,      KC_NO,
 
           // right hand
-          KC_NO,      KC_NO,      KC_COMMA,    KC_7,       KC_8,       KC_9,         KC_NO,
-          KC_NO,      KC_NO,      KC_DOT,      KC_4,       KC_5,       KC_6,         KC_NO,
-          /*none*/    KC_NO,      KC_0,        KC_1,       KC_2,       KC_3,         KC_NO,
-          KC_NO,      _______,    _______,     _______,    _______,    KC_PGUP,      KC_NO,
-          /*none*/    /*none*/    _______,     KC_NO,      KC_HOME,    KC_PGDOWN,    KC_END,
+          KC_NO,      KC_NO,      KC_COMMA,    KC_7,                    KC_8,       KC_9,         KC_NO,
+          KC_NO,      KC_NO,      KC_DOT,      KC_4,                    KC_5,       KC_6,         KC_NO,
+          /*none*/    KC_NO,      KC_0,        KC_1,                    KC_2,       KC_3,         KC_NO,
+          KC_NO,      _______,    _______,     _______,                 _______,    KC_PGUP,      KC_NO,
+          /*none*/    /*none*/    _______,     CUSTOM_KC_SHIFT_LOCK,    KC_HOME,    KC_PGDOWN,    KC_END,
 
           // right thumb
           KC_NO,    KC_NO,
@@ -273,6 +274,22 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 static bool shift_lock_on = false;
 
+void turn_on_shift_lock(void) {
+    add_mods(MOD_BIT(KC_LSHIFT));
+    shift_lock_on = true;
+    ergodox_right_led_1_on();
+    ergodox_right_led_2_on();
+    ergodox_right_led_3_on();
+}
+
+void turn_off_shift_lock(void) {
+    unregister_mods(MOD_BIT(KC_LSHIFT));
+    shift_lock_on = false;
+    ergodox_right_led_1_off();
+    ergodox_right_led_2_off();
+    ergodox_right_led_3_off();
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
     dprintf("KL: kc: 0x%04X, col: %u, row: %u, pressed: %b, time: %u, interrupted: %b, count: %u\n",
@@ -312,24 +329,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case CUSTOM_KC_SHIFT_LOCK:
             if (record->event.pressed) {
-                // pressed
                 if (shift_lock_on) {
-                    // stop shift lock
-                    unregister_mods(MOD_BIT(KC_LSHIFT));
-                    shift_lock_on = false;
-                    ergodox_right_led_1_off();
-                    ergodox_right_led_2_off();
-                    ergodox_right_led_3_off();
+                    turn_off_shift_lock();
                 } else {
-                    // start shift lock
-                    add_mods(MOD_BIT(KC_LSHIFT));
-                    shift_lock_on = true;
-                    ergodox_right_led_1_on();
-                    ergodox_right_led_2_on();
-                    ergodox_right_led_3_on();
+                    turn_on_shift_lock();
                 }
+            } else {}
+            return false;
+        case CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK:
+            if (record->event.pressed && shift_lock_on) {
+                turn_off_shift_lock();
+                return false;
+            }
+
+            // simulate MO(LAYER_SYM)
+            if (record->event.pressed) {
+                layer_on(LAYER_SYM);
             } else {
-                // released
+                layer_off(LAYER_SYM);
             }
             return false;
     }
@@ -338,42 +355,50 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-  uint8_t layer = get_highest_layer(state);
-  ergodox_board_led_off();
-  ergodox_right_led_1_off();
-  ergodox_right_led_2_off();
-  ergodox_right_led_3_off();
-  switch (layer) {
-    case 1:
-      ergodox_right_led_1_on();
-      break;
-    case 2:
-      ergodox_right_led_2_on();
-      break;
-    case 3:
-      ergodox_right_led_3_on();
-      break;
-    case 4:
-      ergodox_right_led_1_on();
-      ergodox_right_led_2_on();
-      break;
-    case 5:
-      ergodox_right_led_1_on();
-      ergodox_right_led_3_on();
-      break;
-    case 6:
-      ergodox_right_led_2_on();
-      ergodox_right_led_3_on();
-      break;
-    case 7:
-      ergodox_right_led_1_on();
-      ergodox_right_led_2_on();
-      ergodox_right_led_3_on();
-      break;
-    default:
-      break;
-  }
-  return state;
-};
+    ergodox_board_led_off();
+    ergodox_right_led_1_off();
+    ergodox_right_led_2_off();
+    ergodox_right_led_3_off();
+
+    if (shift_lock_on) {
+        ergodox_right_led_1_on();
+        ergodox_right_led_2_on();
+        ergodox_right_led_3_on();
+        return state;
+    }
+
+    switch (get_highest_layer(state)) {
+        case 1:
+            ergodox_right_led_1_on();
+            break;
+        case 2:
+            ergodox_right_led_2_on();
+            break;
+        case 3:
+            ergodox_right_led_3_on();
+            break;
+        case 4:
+            ergodox_right_led_1_on();
+            ergodox_right_led_2_on();
+            break;
+        case 5:
+            ergodox_right_led_1_on();
+            ergodox_right_led_3_on();
+            break;
+        case 6:
+            ergodox_right_led_2_on();
+            ergodox_right_led_3_on();
+            break;
+        case 7:
+            ergodox_right_led_1_on();
+            ergodox_right_led_2_on();
+            ergodox_right_led_3_on();
+            break;
+        default:
+            break;
+    }
+    return state;
+}
+
 
 // vim: set foldmethod=manual
