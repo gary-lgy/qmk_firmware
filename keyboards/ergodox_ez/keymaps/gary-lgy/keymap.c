@@ -30,7 +30,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_BLOCK] = LAYOUT_ergodox(
 
             // left hand
-            KC_Q,                        KC_DOT,          KC_U,              KC_P,             KC_J,        KC_COLON,         KC_MEDIA_PLAY_PAUSE,
+            KC_Q,                        KC_DOT,          KC_U,              KC_P,             KC_J,        KC_COLON,         KC_NO,
             KC_SCOLON,                   KC_I,            KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
             KC_Z,                        KC_COMMA,        KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
             MACRO_SEARCH_HIGHLIGHTED,    TD(TD_CMD_G),    KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         C(A(KC_SPACE)),
