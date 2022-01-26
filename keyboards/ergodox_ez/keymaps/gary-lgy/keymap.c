@@ -16,7 +16,6 @@ enum custom_keycodes {
     MACRO_NOT_EQUAL,
     MACRO_COLON_EQUAL,
     MACRO_VISIBLE_WINDOW,
-    MACRO_SEARCH_HIGHLIGHTED,
     CUSTOM_KC_SHIFT_LOCK,
     CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,
 };
@@ -30,11 +29,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_BLOCK] = LAYOUT_ergodox(
 
             // left hand
-            KC_Q,                        KC_DOT,          KC_U,              KC_P,             KC_J,        KC_COLON,         KC_NO,
-            KC_SCOLON,                   KC_I,            KC_E,              KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
-            KC_Z,                        KC_COMMA,        KC_W,              KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
-            MACRO_SEARCH_HIGHLIGHTED,    TD(TD_CMD_G),    KC_LALT,           KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         C(A(KC_SPACE)),
-            MO(LAYER_CONTROL),           KC_NO,           TT(LAYER_FUNC),    TT(LAYER_NUM),    KC_BSPACE,
+            KC_Q,                 KC_DOT,            KC_U,       KC_P,             KC_J,        KC_COLON,         KC_NO,
+            KC_SCOLON,            KC_I,              KC_E,       KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
+            KC_Z,                 KC_COMMA,          KC_W,       KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
+            KC_NO,                G(KC_TAB),         KC_LALT,    KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         C(A(KC_SPACE)),
+            MO(LAYER_CONTROL),    TT(LAYER_FUNC),    KC_HYPR,    TT(LAYER_NUM),    KC_BSPACE,
 
             // left thumb
             /*none*/      KC_MS_BTN1,    KC_MS_BTN2,
@@ -114,11 +113,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_FUNC] = LAYOUT_ergodox(
 
           // left hand
-          KC_NO,      KC_NO,    KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,
-          KC_NO,      KC_NO,    KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,
-          KC_NO,      KC_NO,    KC_NO,             KC_NO,      KC_NO,      KC_NO,      /*none*/
-          KC_NO,      KC_NO,    _______,           _______,    _______,    _______,    KC_NO,
-          _______,    KC_NO,    TG(LAYER_FUNC),    KC_NO,      _______,
+          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      KC_NO,
+          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      KC_NO,
+          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      /*none*/
+          KC_NO,      KC_NO,             _______,    _______,    _______,    _______,    KC_NO,
+          _______,    TG(LAYER_FUNC),    KC_NO,      KC_NO,      _______,
 
           // left thumb
           /*none*/    KC_NO,      KC_NO,
@@ -319,12 +318,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_GRAVE);
             } else {
                 unregister_mods(MOD_BIT(KC_LGUI));
-            }
-            return false;
-        case MACRO_SEARCH_HIGHLIGHTED:
-            if (record->event.pressed) {
-                SEND_STRING(SS_LGUI("c") SS_LGUI("f") SS_DELAY(100) SS_LGUI("v"));
-            } else {
             }
             return false;
         case CUSTOM_KC_SHIFT_LOCK:
