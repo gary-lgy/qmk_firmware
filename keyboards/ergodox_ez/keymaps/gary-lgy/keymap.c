@@ -24,6 +24,11 @@ enum tap_dance_keycodes {
     TD_CMD_G,
 };
 
+#define change_input_method C(A(KC_SPACE))
+#define tmux_prefix C(KC_B)
+#define warpd_hint_mode G(A(KC_X))
+#define warpd_grid_mode G(A(KC_G))
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [LAYER_BLOCK] = LAYOUT_ergodox(
@@ -32,20 +37,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,                 KC_DOT,            KC_U,       KC_P,             KC_J,        KC_COLON,         KC_NO,
             KC_SCOLON,            KC_I,              KC_E,       KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
             KC_Z,                 KC_COMMA,          KC_W,       KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
-            KC_NO,                G(KC_TAB),         KC_LALT,    KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         C(A(KC_SPACE)),
+            KC_NO,                G(KC_TAB),         KC_LALT,    KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         change_input_method,
             MO(LAYER_CONTROL),    TT(LAYER_FUNC),    KC_HYPR,    TT(LAYER_NUM),    KC_BSPACE,
 
             // left thumb
-            /*none*/      KC_MS_BTN1,    KC_MS_BTN2,
-            /*none*/      /*none*/       MACRO_VISIBLE_WINDOW,
-            KC_ESCAPE,    C(KC_B),       KC_MS_BTN3,
+            /*none*/      KC_MS_BTN1,     KC_MS_BTN2,
+            /*none*/      /*none*/        MACRO_VISIBLE_WINDOW,
+            KC_ESCAPE,    tmux_prefix,    KC_MS_BTN3,
 
             // right hand
-            KC_NO,      KC_SLASH,    KC_K,        KC_L,                                    KC_C,       KC_R,       KC_F,
-            KC_TAB,     KC_MINUS,    KC_M,        KC_H,                                    KC_T,       KC_S,       KC_B,
-            /*none*/    KC_EQUAL,    KC_V,        KC_N,                                    KC_D,       KC_G,       KC_X,
-            KC_NO,      KC_RCTRL,    KC_RGUI,     KC_RSHIFT,                               KC_RALT,    KC_UP,      KC_GRAVE,
-            /*none*/    /*none*/     KC_SPACE,    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,    KC_LEFT,    KC_DOWN,    KC_RIGHT,
+            KC_NO,         KC_SLASH,    KC_K,        KC_L,                                    KC_C,       KC_R,       KC_F,
+            KC_TAB,        KC_MINUS,    KC_M,        KC_H,                                    KC_T,       KC_S,       KC_B,
+            /*none*/       KC_EQUAL,    KC_V,        KC_N,                                    KC_D,       KC_G,       KC_X,
+            G(A(KC_G)),    KC_RCTRL,    KC_RGUI,     KC_RSHIFT,                               KC_RALT,    KC_UP,      KC_GRAVE,
+            /*none*/       /*none*/     KC_SPACE,    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,    KC_LEFT,    KC_DOWN,    KC_RIGHT,
 
             // right thumb
             C(KC_LEFT),    C(KC_RIGHT),
@@ -64,14 +69,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           _______,    KC_NO,                     KC_NO,                  KC_NO,                   _______,
 
           // left thumb
-          /*none*/    KC_NO,      KC_NO,
-          /*none*/    /*none*/    KC_NO,
-          KC_NO,      KC_NO,      KC_NO,
+          /*none*/            KC_NO,      KC_NO,
+          /*none*/            /*none*/    KC_NO,
+          warpd_grid_mode,    KC_NO,      KC_NO,
 
           // right hand
           KC_NO,      KC_NO,      KC_NO,      KC_NO,            KC_NO,      MACRO_NOT_EQUAL,      KC_NO,
-          KC_NO,      KC_NO,      KC_NO,      KC_NO,            KC_NO,      MACRO_COLON_EQUAL,    KC_NO,
-          /*none*/    KC_NO,      KC_NO,      KC_NO,            KC_NO,      KC_NO,                KC_NO,
+          KC_NO,      KC_NO,      KC_NO,      KC_HASH,          KC_ASTR,    MACRO_COLON_EQUAL,    KC_NO,
+          /*none*/    KC_NO,      KC_NO,      KC_NO,            KC_AT,      KC_NO,                KC_NO,
           KC_NO,      _______,    _______,    _______,          _______,    KC_NO,                KC_NO,
           /*none*/    /*none*/    _______,    TG(LAYER_SYM),    KC_NO,      KC_NO,                KC_NO,
 
@@ -106,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           // right thumb
           KC_NO,    KC_NO,
           KC_NO,
-          KC_NO,    KC_NO,    KC_NO
+          KC_NO,    KC_NO,    warpd_hint_mode
 
           ),
 
