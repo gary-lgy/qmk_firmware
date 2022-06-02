@@ -26,8 +26,6 @@ enum tap_dance_keycodes {
 
 #define change_input_method C(A(KC_SPACE))
 #define tmux_prefix C(KC_B)
-#define warpd_hint_mode G(A(KC_X))
-#define warpd_grid_mode G(A(KC_G))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -37,20 +35,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,                 KC_DOT,            KC_U,       KC_P,             KC_J,        KC_COLON,         KC_NO,
             KC_SCOLON,            KC_I,              KC_E,       KC_O,             KC_Y,        KC_UNDERSCORE,    TT(LAYER_SYM),
             KC_Z,                 KC_COMMA,          KC_W,       KC_A,             KC_QUOTE,    KC_DOLLAR,        /*none*/
-            KC_NO,                G(KC_TAB),         KC_LALT,    KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         change_input_method,
+            KC_NO,                G(KC_TAB),         KC_LALT,    KC_LSHIFT,        KC_LGUI,     KC_LCTRL,         KC_NO,
             MO(LAYER_CONTROL),    TT(LAYER_FUNC),    KC_HYPR,    TT(LAYER_NUM),    KC_BSPACE,
 
             // left thumb
             /*none*/      KC_MS_BTN1,     KC_MS_BTN2,
             /*none*/      /*none*/        MACRO_VISIBLE_WINDOW,
-            KC_ESCAPE,    tmux_prefix,    KC_MS_BTN3,
+            KC_ESCAPE,    KC_CAPSLOCK,    KC_MS_BTN3,
 
             // right hand
-            KC_NO,         KC_SLASH,    KC_K,        KC_L,                                    KC_C,       KC_R,       KC_F,
-            KC_TAB,        KC_MINUS,    KC_M,        KC_H,                                    KC_T,       KC_S,       KC_B,
-            /*none*/       KC_EQUAL,    KC_V,        KC_N,                                    KC_D,       KC_G,       KC_X,
-            G(A(KC_G)),    KC_RCTRL,    KC_RGUI,     KC_RSHIFT,                               KC_RALT,    KC_UP,      KC_GRAVE,
-            /*none*/       /*none*/     KC_SPACE,    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,    KC_LEFT,    KC_DOWN,    KC_RIGHT,
+            KC_NO,             KC_SLASH,    KC_K,        KC_L,                                    KC_C,       KC_R,       KC_F,
+            KC_TAB,            KC_MINUS,    KC_M,        KC_H,                                    KC_T,       KC_S,       KC_B,
+            /*none*/           KC_EQUAL,    KC_V,        KC_N,                                    KC_D,       KC_G,       KC_X,
+            MO(LAYER_FUNC),    KC_RCTRL,    KC_RGUI,     KC_RSHIFT,                               KC_RALT,    KC_UP,      KC_GRAVE,
+            /*none*/           /*none*/     KC_SPACE,    CUSTOM_KC_MO_LAYER_SYM_OR_SHIFT_LOCK,    KC_LEFT,    KC_DOWN,    KC_RIGHT,
 
             // right thumb
             C(KC_LEFT),    C(KC_RIGHT),
@@ -66,19 +64,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           KC_NO,      KC_LEFT_ANGLE_BRACKET,     KC_LEFT_PAREN,          KC_RIGHT_PAREN,          KC_AMPERSAND,    KC_NO,      TG(LAYER_SYM),
           KC_NO,      KC_BSLASH,                 KC_LBRACKET,            KC_RBRACKET,             KC_PIPE,         KC_NO,      /*none*/
           KC_NO,      KC_NO,                     _______,                _______,                 _______,         _______,    KC_NO,
-          _______,    KC_NO,                     KC_NO,                  KC_NO,                   _______,
+          _______,    KC_NO,                     KC_NO,                  HYPR(KC_SPACE),          _______,
 
           // left thumb
-          /*none*/            KC_NO,      KC_NO,
-          /*none*/            /*none*/    KC_NO,
-          warpd_grid_mode,    KC_NO,      KC_NO,
+          /*none*/    KC_NO,      KC_NO,
+          /*none*/    /*none*/    KC_NO,
+          KC_NO,      KC_NO,      KC_NO,
 
           // right hand
-          KC_NO,      KC_NO,      KC_NO,      KC_NO,            KC_NO,      MACRO_NOT_EQUAL,      KC_NO,
-          KC_NO,      KC_NO,      KC_NO,      KC_HASH,          KC_ASTR,    MACRO_COLON_EQUAL,    KC_NO,
-          /*none*/    KC_NO,      KC_NO,      KC_NO,            KC_AT,      KC_NO,                KC_NO,
-          KC_NO,      _______,    _______,    _______,          _______,    KC_NO,                KC_NO,
-          /*none*/    /*none*/    _______,    TG(LAYER_SYM),    KC_NO,      KC_NO,                KC_NO,
+          KC_NO,      KC_NO,      KC_NO,      KC_NO,            MACRO_COLON_EQUAL,    MACRO_NOT_EQUAL,    KC_NO,
+          KC_NO,      KC_NO,      KC_NO,      KC_HASH,          KC_ASTR,              KC_CIRCUMFLEX,      KC_NO,
+          /*none*/    KC_NO,      KC_NO,      KC_EXCLAIM,       KC_AT,                KC_NO,              KC_NO,
+          KC_NO,      _______,    _______,    _______,          _______,              KC_NO,              KC_NO,
+          /*none*/    /*none*/    _______,    TG(LAYER_SYM),    KC_NO,                KC_NO,              KC_NO,
 
           // right thumb
           KC_NO,    KC_NO,
@@ -111,18 +109,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           // right thumb
           KC_NO,    KC_NO,
           KC_NO,
-          KC_NO,    KC_NO,    warpd_hint_mode
+          KC_NO,    KC_NO,    KC_NO
 
           ),
 
   [LAYER_FUNC] = LAYOUT_ergodox(
 
           // left hand
-          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      KC_NO,
-          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      KC_NO,
-          KC_NO,      KC_NO,             KC_NO,      KC_NO,      KC_NO,      KC_NO,      /*none*/
-          KC_NO,      KC_NO,             _______,    _______,    _______,    _______,    KC_NO,
-          _______,    TG(LAYER_FUNC),    KC_NO,      KC_NO,      _______,
+          KC_NO,      KC_NO,             KC_UP,      KC_NO,       KC_NO,      KC_NO,      KC_NO,
+          KC_NO,      KC_LEFT,           KC_DOWN,    KC_RIGHT,    KC_NO,      KC_NO,      KC_NO,
+          KC_NO,      KC_NO,             KC_NO,      KC_NO,       KC_NO,      KC_NO,      /*none*/
+          KC_NO,      KC_NO,             _______,    _______,     _______,    _______,    KC_NO,
+          _______,    TG(LAYER_FUNC),    KC_NO,      KC_NO,       _______,
 
           // left thumb
           /*none*/    KC_NO,      KC_NO,
