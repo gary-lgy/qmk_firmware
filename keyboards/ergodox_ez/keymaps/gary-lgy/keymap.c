@@ -7,6 +7,7 @@ enum layers {
     LAYER_SYM,
     LAYER_NUM,
     LAYER_FUNC,
+    LAYER_GAMING,
     LAYER_CONTROL,
 };
 
@@ -141,14 +142,42 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
           ),
 
+    [LAYER_GAMING] = LAYOUT_ergodox(
+
+            // left hand
+            KC_GRAVE,       KC_1,       KC_2,        KC_3,       KC_4,    KC_5,    KC_NO,
+            KC_TAB,         KC_Q,       KC_W,        KC_E,       KC_R,    KC_T,    KC_NO,
+            KC_CAPSLOCK,    KC_A,       KC_S,        KC_D,       KC_F,    KC_G,    /*none*/
+            KC_LSHIFT,      KC_Z,       KC_X,        KC_C,       KC_V,    KC_B,    KC_NO,
+            _______,        KC_LGUI,    KC_LCTRL,    KC_LALT,    KC_SPACE,
+
+            // left thumb
+            /*none*/    KC_NO,        KC_NO,
+            /*none*/    /*none*/      KC_NO,
+            KC_TAB,     KC_ESCAPE,    KC_NO,
+
+            // right hand
+            KC_NO,      KC_6,       KC_7,        KC_8,         KC_9,        KC_0,         KC_MINUS,
+            KC_NO,      KC_Y,       KC_U,        KC_I,         KC_O,        KC_P,         KC_EQUAL,
+            /*none*/    KC_H,       KC_J,        KC_K,         KC_L,        KC_SCOLON,    KC_QUOTE,
+            KC_NO,      KC_B,       KC_N,        KC_M,         KC_COMMA,    KC_DOT,       KC_SLASH,
+            /*none*/    /*none*/    KC_ENTER,    KC_BSPACE,    KC_NO,       KC_NO,        KC_NO,
+
+            // right thumb
+            KC_LBRACKET,    KC_UP,
+            KC_LEFT,
+            KC_RBRACKET,    KC_DOWN,    KC_RIGHT
+
+            ),
+
   [LAYER_CONTROL] = LAYOUT_ergodox(
 
           // left hand
-          KC_AUDIO_MUTE,        TO(LAYER_BLOCK),    KC_NO,    KC_NO,    KC_NO,    KC_NO,      KC_NO,
-          KC_AUDIO_VOL_UP,      KC_NO,              KC_NO,    KC_NO,    KC_NO,    KC_NO,      KC_NO,
-          KC_AUDIO_VOL_DOWN,    KC_NO,              KC_NO,    KC_NO,    KC_NO,    KC_NO,
-          KC_NO,                KC_NO,              KC_NO,    KC_NO,    KC_NO,    KC_NO,      KC_NO,
-          KC_NO,                DEBUG,              KC_NO,    KC_NO,    KC_NO,    /*none*/    /*none*/
+          KC_AUDIO_MUTE,        TO(LAYER_BLOCK),    TO(LAYER_GAMING),    KC_NO,    KC_NO,    KC_NO,      KC_NO,
+          KC_AUDIO_VOL_UP,      KC_NO,              KC_NO,               KC_NO,    KC_NO,    KC_NO,      KC_NO,
+          KC_AUDIO_VOL_DOWN,    KC_NO,              KC_NO,               KC_NO,    KC_NO,    KC_NO,
+          KC_NO,                KC_NO,              KC_NO,               KC_NO,    KC_NO,    KC_NO,      KC_NO,
+          KC_NO,                DEBUG,              KC_NO,               KC_NO,    KC_NO,    /*none*/    /*none*/
 
           // left thumb
           /*none*/    KC_NO,      KC_NO,
@@ -350,7 +379,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-layer_state_t layer_state_set_user(layer_state_t state) {
+void setup_led_for_layer(layer_state_t state) {
     ergodox_board_led_off();
     ergodox_right_led_1_off();
     ergodox_right_led_2_off();
@@ -360,7 +389,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         ergodox_right_led_1_on();
         ergodox_right_led_2_on();
         ergodox_right_led_3_on();
-        return state;
+        return;
     }
 
     switch (get_highest_layer(state)) {
@@ -393,8 +422,24 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         default:
             break;
     }
-    return state;
 }
 
+void turn_off_auto_shift_for_gaming_layer(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+        case LAYER_GAMING:
+            autoshift_disable();
+            break;
+        default:
+            autoshift_enable();
+            break;
+    }
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    setup_led_for_layer(state);
+    turn_off_auto_shift_for_gaming_layer(state);
+
+    return state;
+}
 
 // vim: set foldmethod=manual
