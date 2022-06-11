@@ -8,6 +8,7 @@ enum layers {
     LAYER_NUM,
     LAYER_FUNC,
     LAYER_GAMING,
+    LAYER_GAMING_FN,
     LAYER_CONTROL,
 };
 
@@ -157,16 +158,44 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_TAB,     KC_ESCAPE,    KC_NO,
 
             // right hand
-            KC_NO,      KC_6,       KC_7,        KC_8,         KC_9,        KC_0,         KC_MINUS,
-            KC_NO,      KC_Y,       KC_U,        KC_I,         KC_O,        KC_P,         KC_EQUAL,
-            /*none*/    KC_H,       KC_J,        KC_K,         KC_L,        KC_SCOLON,    KC_QUOTE,
-            KC_NO,      KC_B,       KC_N,        KC_M,         KC_COMMA,    KC_DOT,       KC_SLASH,
-            /*none*/    /*none*/    KC_ENTER,    KC_BSPACE,    KC_NO,       KC_NO,        KC_NO,
+            KC_NO,      KC_6,       KC_7,        KC_8,         KC_9,       KC_0,         KC_MINUS,
+            KC_NO,      KC_Y,       KC_U,        KC_I,         KC_O,       KC_P,         KC_EQUAL,
+            /*none*/    KC_H,       KC_J,        KC_K,         KC_L,       KC_SCOLON,    KC_QUOTE,
+            KC_NO,      KC_N,       KC_M,        KC_COMMA,     KC_DOT,     KC_UP,        KC_SLASH,
+            /*none*/    /*none*/    KC_ENTER,    KC_BSPACE,    KC_LEFT,    KC_DOWN,      KC_RIGHT,
 
             // right thumb
-            KC_LBRACKET,    KC_UP,
-            KC_LEFT,
-            KC_RBRACKET,    KC_DOWN,    KC_RIGHT
+            KC_LBRACKET,    KC_NO,
+            KC_NO,
+            KC_RBRACKET,    KC_NO,    MO(LAYER_GAMING_FN)
+
+            ),
+
+    [LAYER_GAMING_FN] = LAYOUT_ergodox(
+
+            // left hand
+            _______,    KC_F1,      KC_F2,      KC_F3,      KC_F4,      KC_F5,      _______,
+            _______,    _______,    _______,    _______,    _______,    _______,    _______,
+            _______,    _______,    _______,    _______,    _______,    _______,    /*none*/
+            _______,    _______,    _______,    _______,    _______,    _______,    _______,
+            _______,    _______,    _______,    _______,    _______,    /*none*/    /*none*/
+
+            // left thumb
+            /*none*/    _______,    _______,
+            /*none*/    /*none*/    _______,
+            _______,    _______,    _______,
+
+            // right hand
+            _______,    KC_F6,      KC_F7,      KC_F8,      KC_F9,      KC_F10,     KC_F11,
+            _______,    _______,    _______,    _______,    _______,    _______,    KC_F12,
+            /*none*/    _______,    _______,    _______,    _______,    _______,    _______,
+            _______,    _______,    _______,    _______,    _______,    _______,    _______,
+            /*none*/    /*none*/    _______,    _______,    _______,    _______,    _______,
+
+            // right thumb
+            _______,    _______,
+            _______,
+            _______,    _______,    KC_NO
 
             ),
 
@@ -207,6 +236,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+// Tap-Dance
 typedef enum {
     TD_NONE,
     TD_UNKNOWN,
@@ -425,13 +455,10 @@ void setup_led_for_layer(layer_state_t state) {
 }
 
 void turn_off_auto_shift_for_gaming_layer(layer_state_t state) {
-    switch (get_highest_layer(state)) {
-        case LAYER_GAMING:
-            autoshift_disable();
-            break;
-        default:
-            autoshift_enable();
-            break;
+    if (layer_state_cmp(state, LAYER_GAMING)) {
+        autoshift_disable();
+    } else {
+        autoshift_enable();
     }
 }
 
