@@ -44,9 +44,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Repeat auto-shifted keys
 // https://beta.docs.qmk.fm/using-qmk/software-features/feature_auto_shift#how-does-it-work
 // Enable auto-repeat support.
-/* #define AUTO_SHIFT_REPEAT */
+#define AUTO_SHIFT_REPEAT
 // Don't auto-repeat the shifted key if the key is held down.
 // To repeat, use tap-hold.
 // To repeat the non-shifted key, release the first tap within auto-thift timeout.
 // To repeat the shifted key, hold until the shifted key is registered then hold again.
-/* #define AUTO_SHIFT_NO_AUTO_REPEAT */
+#define AUTO_SHIFT_NO_AUTO_REPEAT
