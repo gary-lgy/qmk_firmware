@@ -7,11 +7,11 @@
 
 /* Conservatively apply modifiers for Mod Tap keys.
  * https://beta.docs.qmk.fm/using-qmk/software-features/tap_hold#ignore-mod-tap-interrupt */
-/* #define IGNORE_MOD_TAP_INTERRUPT */
+#define IGNORE_MOD_TAP_INTERRUPT
 
 /* Trigger Mod Tap more easily */
 /* https://beta.docs.qmk.fm/using-qmk/software-features/tap_hold#permissive-hold */
-/* #define PERMISSIVE_HOLD */
+#define PERMISSIVE_HOLD
 
 /* https://beta.docs.qmk.fm/using-qmk/software-features/tap_hold#tapping-term */
 #define TAPPING_TERM_PER_KEY
@@ -22,12 +22,11 @@
 #ifdef TAPPING_TOGGLE
 #undef TAPPING_TOGGLE
 #endif
-#define TAPPING_TOGGLE 1
+#define TAPPING_TOGGLE 2
 
 /* Tapping this number of times holds the key until tapped once again. */
 /* https://beta.docs.qmk.fm/using-qmk/software-features/one_shot_keys */
 #define ONESHOT_TAP_TOGGLE 2
 
-#define AUTO_SHIFT_TIMEOUT 135
 #define AUTO_SHIFT_REPEAT
 #define AUTO_SHIFT_NO_AUTO_REPEAT

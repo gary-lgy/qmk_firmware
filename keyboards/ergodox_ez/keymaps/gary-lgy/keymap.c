@@ -4,8 +4,10 @@
 
 enum layers {
     LAYER_QWERTY,
-    LAYER_NUM,
     LAYER_GAMING,
+    LAYER_NAV,
+    LAYER_SYM,
+    LAYER_NUM,
     LAYER_CONTROL,
 };
 
@@ -53,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_GRAVE,             KC_1,           KC_2,            KC_3,             KC_4,    KC_5,    KC_LEFT_GUI,
             KC_TAB,               KC_Q,           KC_W,            KC_E,             KC_R,    KC_T,    KC_NO,
             KC_CAPS_LOCK,         KC_A,           KC_S,            KC_D,             KC_F,    KC_G,    /*none*/
-            KC_LEFT_SHIFT,        KC_Z,           KC_X,            KC_C,             KC_V,    KC_B,    KC_NO,
+            KC_LEFT_SHIFT,        KC_Z,           KC_X,            KC_C,             KC_V,    KC_B,    MO(LAYER_NAV),
             MO(LAYER_CONTROL),    KC_LEFT_ALT,    KC_LEFT_CTRL,    TT(LAYER_NUM),    KC_BACKSPACE,
 
             // left thumb
@@ -62,11 +64,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_ESCAPE,    CUSTOM_KC_SHIFT_LOCK,    KC_END,
 
             // right hand
-            KC_BACKSLASH,    KC_6,       KC_7,        KC_8,             KC_9,       KC_0,            KC_MINUS,
-            KC_NO,           KC_Y,       KC_U,        KC_I,             KC_O,       KC_P,            KC_EQUAL,
-            /*none*/         KC_H,       KC_J,        KC_K,             KC_L,       KC_SEMICOLON,    KC_QUOTE,
-            KC_NO,           KC_N,       KC_M,        KC_COMMA,         KC_DOT,     KC_UP,           KC_SLASH,
-            /*none*/         /*none*/    KC_SPACE,    TT(LAYER_NUM),    KC_LEFT,    KC_DOWN,         KC_RIGHT,
+            KC_BACKSLASH,    KC_6,       KC_7,                      KC_8,             KC_9,       KC_0,            KC_MINUS,
+            KC_NO,           KC_Y,       KC_U,                      KC_I,             KC_O,       KC_P,            KC_EQUAL,
+            /*none*/         KC_H,       KC_J,                      KC_K,             KC_L,       KC_SEMICOLON,    KC_QUOTE,
+            KC_NO,           KC_N,       KC_M,                      KC_COMMA,         KC_DOT,     KC_UP,           KC_SLASH,
+            /*none*/         /*none*/    LT(LAYER_NAV,KC_SPACE),    TT(LAYER_SYM),    KC_LEFT,    KC_DOWN,         KC_RIGHT,
 
             // right thumb
             KC_DEL,     KC_NO,
@@ -90,11 +92,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_LEFT_SHIFT,    KC_ESCAPE,    _______,
 
             // right hand
-            _______,    _______,    _______,         _______,    _______,    _______,    _______,
-            _______,    _______,    _______,         _______,    _______,    _______,    _______,
-            /*none*/    _______,    _______,         _______,    _______,    _______,    _______,
-            _______,    _______,    _______,         _______,    _______,    _______,    _______,
-            /*none*/    /*none*/    KC_BACKSPACE,    _______,    _______,    _______,    _______,
+            _______,    _______,    _______,                       _______,    _______,    _______,    _______,
+            _______,    _______,    _______,                       _______,    _______,    _______,    _______,
+            /*none*/    _______,    _______,                       _______,    _______,    _______,    _______,
+            _______,    _______,    _______,                       _______,    _______,    _______,    _______,
+            /*none*/    /*none*/    LT(LAYER_NAV,KC_BACKSPACE),    _______,    _______,    _______,    _______,
 
             // right thumb
             _______,    _______,
@@ -103,31 +105,87 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
             ),
 
+  [LAYER_NAV] = LAYOUT_ergodox(
+
+          // left hand
+          KC_NO,    KC_F1,    KC_F2,      KC_F3,      KC_F4,      KC_F5,    KC_NO,
+          KC_NO,    KC_NO,    KC_NO,      KC_LCTL,    KC_NO,      KC_NO,    KC_NO,
+          KC_NO,    KC_NO,    KC_LALT,    KC_LSFT,    KC_LGUI,    KC_NO,    /*none*/
+          KC_NO,    KC_NO,    KC_NO,      KC_NO,      KC_NO,      KC_NO,    KC_NO,
+          KC_NO,    KC_NO,    KC_NO,      KC_NO,      KC_BACKSPACE,
+
+          // left thumb
+          /*none*/    KC_NO,      KC_NO,
+          /*none*/    /*none*/    KC_NO,
+          KC_NO,      KC_NO,      KC_NO,
+
+          // right hand
+          KC_NO,      KC_F6,      KC_F7,       KC_F8,      KC_F9,       KC_F10,    KC_F11,
+          KC_NO,      KC_NO,      KC_HOME,     KC_UP,      KC_END,      KC_NO,     KC_F12,
+          /*none*/    KC_NO,      KC_LEFT,     KC_DOWN,    KC_RIGHT,    KC_NO,     KC_NO,
+          KC_NO,      KC_NO,      KC_PGUP,     KC_TAB,     KC_PGDN,     KC_NO,     KC_NO,
+          /*none*/    /*none*/    KC_SPACE,    KC_NO,      KC_NO,       KC_NO,     KC_NO,
+
+          // right thumb
+          KC_NO,    KC_NO,
+          KC_NO,
+          KC_NO,    KC_NO,    KC_NO
+
+          ),
+
+  [LAYER_SYM] = LAYOUT_ergodox(
+
+          // left hand
+          KC_NO,    KC_F1,    KC_F2,                KC_F3,                  KC_F4,                   KC_F5,           KC_NO,
+          KC_NO,    KC_NO,    MACRO_NOT_EQUAL,      KC_LEFT_CURLY_BRACE,    KC_RIGHT_CURLY_BRACE,    KC_PERCENT,      KC_NO,
+          KC_NO,    KC_NO,    MACRO_COLON_EQUAL,    KC_LEFT_PAREN,          KC_RIGHT_PAREN,          KC_AMPERSAND,    /*none*/
+          KC_NO,    KC_NO,    KC_BACKSLASH,         KC_LEFT_BRACKET,        KC_RIGHT_BRACKET,        KC_PIPE,         KC_NO,
+          KC_NO,    KC_NO,    KC_NO,                KC_NO,                  _______,
+
+          // left thumb
+          /*none*/    KC_NO,      KC_NO,
+          /*none*/    /*none*/    KC_NO,
+          KC_NO,      KC_NO,      KC_NO,
+
+          // right hand
+          KC_NO,      KC_F6,      KC_F7,      KC_F8,            KC_F9,    KC_F10,    KC_F11,
+          KC_NO,      KC_NO,      KC_NO,      KC_NO,            KC_NO,    KC_NO,     KC_F12,
+          /*none*/    KC_NO,      KC_NO,      KC_NO,            KC_NO,    KC_NO,     KC_NO,
+          KC_NO,      KC_NO,      KC_NO,      KC_NO,            KC_NO,    KC_NO,     KC_NO,
+          /*none*/    /*none*/    _______,    TG(LAYER_SYM),    KC_NO,    KC_NO,     KC_NO,
+
+          // right thumb
+          KC_NO,    KC_NO,
+          KC_NO,
+          KC_NO,    KC_NO,    KC_NO
+
+          ),
+
   [LAYER_NUM] = LAYOUT_ergodox(
 
           // left hand
-          _______,    KC_F1,      KC_F2,                     KC_F3,                  KC_F4,                   KC_F5,           _______,
-          _______,    _______,    KC_RIGHT_ANGLE_BRACKET,    KC_LEFT_CURLY_BRACE,    KC_RIGHT_CURLY_BRACE,    KC_PERCENT,      _______,
-          _______,    _______,    KC_LEFT_ANGLE_BRACKET,     KC_LEFT_PAREN,          KC_RIGHT_PAREN,          KC_HASH,         /*none*/
-          _______,    _______,    KC_BACKSLASH,              KC_LEFT_BRACKET,        KC_RIGHT_BRACKET,        KC_AMPERSAND,    _______,
-          _______,    _______,    _______,                   _______,                _______,
+          KC_NO,    KC_F1,    KC_F2,    KC_F3,               KC_F4,         KC_F5,    KC_NO,
+          KC_NO,    KC_NO,    KC_NO,    KC_NO,               KC_NO,         KC_NO,    KC_NO,
+          KC_NO,    KC_NO,    KC_NO,    LGUI(KC_C),          LGUI(KC_V),    KC_NO,    /*none*/
+          KC_NO,    KC_NO,    KC_NO,    LSFT(LGUI(KC_Z)),    LGUI(KC_Z),    KC_NO,    KC_NO,
+          KC_NO,    KC_NO,    KC_NO,    TG(LAYER_NUM),       _______,
 
           // left thumb
-          /*none*/    _______,    _______,
-          /*none*/    /*none*/    _______,
-          _______,    _______,    _______,
+          /*none*/    KC_NO,      KC_NO,
+          /*none*/    /*none*/    KC_NO,
+          KC_NO,      KC_NO,      KC_NO,
 
           // right hand
-          _______,    KC_F6,       KC_F7,      KC_F8,      KC_F9,      KC_F10,     _______,
-          _______,    KC_COMMA,    KC_7,       KC_8,       KC_9,       KC_F11,     _______,
-          /*none*/    KC_DOT,      KC_4,       KC_5,       KC_6,       KC_F12,     _______,
-          _______,    KC_0,        KC_1,       KC_2,       KC_3,       _______,    _______,
-          /*none*/    /*none*/     _______,    _______,    _______,    _______,    _______,
+          KC_NO,      KC_F6,       KC_F7,      KC_F8,    KC_F9,    KC_F10,    KC_F11,
+          KC_NO,      KC_COMMA,    KC_7,       KC_8,     KC_9,     KC_NO,     KC_F12,
+          /*none*/    KC_DOT,      KC_4,       KC_5,     KC_6,     KC_NO,     KC_NO,
+          KC_NO,      KC_0,        KC_1,       KC_2,     KC_3,     KC_NO,     KC_NO,
+          /*none*/    /*none*/     _______,    KC_NO,    KC_NO,    KC_NO,     KC_NO,
 
           // right thumb
-          _______,    _______,
-          _______,
-          _______,    _______,    _______
+          KC_NO,    KC_NO,
+          KC_NO,
+          KC_NO,    KC_NO,    KC_NO
 
           ),
 
